@@ -1,13 +1,16 @@
 #ifndef FUNCS_H
 #define FUNCS_H
 
-void source0(double **dom, int nx, int *ny, int nq);
-void source1(double **dom, int nx, int *ny, int nq);
-void source2(double **dom, int nx, int *ny, int nq);
-void source3(double **dom, int nx, int *ny, int nq);
-void source4(double **dom, int nx, int *ny, int nq);
-void plm(double **dom, int nx, int *ny, int nq);
-void flux(double **dom, int nx, int *ny, int nq);
-double reduce(double **dom, int nx, int *ny, int nq);
+#include "dom.h" 
+
+void source0(struct Domain *dom);
+void source1(struct Domain *dom);
+void source2(struct Domain *dom);
+void source3(struct Domain *dom);
+void source4(struct Domain *dom);
+void source_wu1(struct Domain *dom);
+void plm(struct Domain *dom);
+void flux(struct Domain *dom);
+double reduce(struct Domain *dom);
 
 #endif

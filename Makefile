@@ -1,8 +1,8 @@
 
 default: ompTest
 
-SRC = main.c funcs.c prim.c
-HDR = funcs.h prim.h
+SRC = main.c funcs.c prim.c dom.c
+HDR = funcs.h prim.h dom.h
 INC = 
 LIB = -lm
 FLAG = -O3 -fopenmp -Wall

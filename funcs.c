@@ -1,118 +1,146 @@
 #include <math.h>
 #include <omp.h>
+#include "dom.h"
 #include "funcs.h"
 #include "prim.h"
 
 
-void source0(double **dom, int nx, int *ny, int nq)
+void source0(struct Domain *dom)
 {
     int i, j;
-    for(i=0; i<nx; i++)
+    int nq = dom->nq;
+    for(i=0; i<dom->nx; i++)
     {
-        double x = (i + 0.5) / nx;
+        double x = 0.5*(dom->ximh[i] + dom->ximh[i+1]);
 
-        for(j=0; j<ny[i]; j++)
+        for(j=0; j<dom->ny[i]; j++)
         {
-            double y = (6.0*(j+0.5))/ny[i];
-            source_prim(dom[i] + nq*j, x, y, nq);
+            double y = 0.5*(dom->yjmh[i][j] + dom->yjmh[i][j+1]);
+            source_prim(dom->prim[i] + nq*j, x, y, nq);
         }
     }
 }
 
 
-void source1(double **dom, int nx, int *ny, int nq)
+void source1(struct Domain *dom)
 {
     int i;
+    int nq = dom->nq;
     
 #pragma omp parallel for private(i)
-    for(i=0; i<nx; i++)
+    for(i=0; i<dom->nx; i++)
     {
-        double x = (i + 0.5) / nx;
-        int j;
+        double x = 0.5*(dom->ximh[i] + dom->ximh[i+1]);
 
-        for(j=0; j<ny[i]; j++)
+        int j;
+        for(j=0; j<dom->ny[i]; j++)
         {
-            double y = (6.0*(j+0.5))/ny[i];
-            source_prim(dom[i] + nq*j, x, y, nq);
+            double y = 0.5*(dom->yjmh[i][j] + dom->yjmh[i][j+1]);
+            source_prim(dom->prim[i] + nq*j, x, y, nq);
         }
     }
 }
 
 
 
-void source2(double **dom, int nx, int *ny, int nq)
+void source2(struct Domain *dom)
 {
     int i;
+    int nq = dom->nq;
     
 #pragma omp parallel for schedule(dynamic, 8) private(i)
-    for(i=0; i<nx; i++)
+    for(i=0; i<dom->nx; i++)
     {
-        double x = (i + 0.5) / nx;
+        double x = 0.5*(dom->ximh[i] + dom->ximh[i+1]);
         int j;
-
-        for(j=0; j<ny[i]; j++)
+        for(j=0; j<dom->ny[i]; j++)
         {
-            double y = (6.0*(j+0.5))/ny[i];
-            source_prim(dom[i] + nq*j, x, y, nq);
+            double y = 0.5*(dom->yjmh[i][j] + dom->yjmh[i][j+1]);
+            source_prim(dom->prim[i] + nq*j, x, y, nq);
         }
     }
 }
 
 
-void source3(double **dom, int nx, int *ny, int nq)
+void source3(struct Domain *dom)
 {
     int i;
-    
-    for(i=0; i<nx; i++)
+    int nq = dom->nq;
+    for(i=0; i<dom->nx; i++)
     {
-        double x = (i + 0.5) / nx;
+        double x = 0.5*(dom->ximh[i] + dom->ximh[i+1]);
+        
         int j;
-
 #pragma omp parallel for private(j)
-        for(j=0; j<ny[i]; j++)
+        for(j=0; j<dom->ny[i]; j++)
         {
-            double y = (6.0*(j+0.5))/ny[i];
-            source_prim(dom[i] + nq*j, x, y, nq);
+            double y = 0.5*(dom->yjmh[i][j] + dom->yjmh[i][j+1]);
+            source_prim(dom->prim[i] + nq*j, x, y, nq);
         }
     }
+    
 }
 
 
-void source4(double **dom, int nx, int *ny, int nq)
+void source4(struct Domain *dom)
 {
     int i;
-    
-    for(i=0; i<nx; i++)
+    int nq = dom->nq;
+    for(i=0; i<dom->nx; i++)
     {
-        double x = (i + 0.5) / nx;
-        int j;
+        double x = 0.5*(dom->ximh[i] + dom->ximh[i+1]);
 
+        int j;
 #pragma omp parallel for schedule(dynamic) private(j)
-        for(j=0; j<ny[i]; j++)
+        for(j=0; j<dom->ny[i]; j++)
         {
-            double y = (6.0*(j+0.5))/ny[i];
-            source_prim(dom[i] + nq*j, x, y, nq);
+            double y = 0.5*(dom->yjmh[i][j] + dom->yjmh[i][j+1]);
+            source_prim(dom->prim[i] + nq*j, x, y, nq);
         }
     }
 }
 
-void plm(double **dom, int nx, int *ny, int nq)
+
+void source_wu1(struct Domain *dom)
+{
+    int nq = dom->nq;
+
+    int w;
+#pragma omp parallel for schedule(dynamic) private(w)
+    for(w=0; w<dom->nw; w++)
+    {
+        int i = dom->work_unit[w].i;
+        int ja = dom->work_unit[w].ja;
+        int jb = dom->work_unit[w].jb;
+        
+        double x = 0.5*(dom->ximh[i] + dom->ximh[i+1]);
+
+        int j;
+        for(j=ja; j<jb; j++)
+        {
+            double y = 0.5*(dom->yjmh[i][j] + dom->yjmh[i][j+1]);
+            source_prim(dom->prim[i] + nq*j, x, y, nq);
+        }
+    }
+}
+
+void plm(struct Domain *dom)
 {
 }
 
-void flux(double **dom, int nx, int *ny, int nq)
+void flux(struct Domain *dom)
 {
 }
 
-double reduce(double **dom, int nx, int *ny, int nq)
+double reduce(struct Domain *dom)
 {
     double sum = 0.0;
     int i, j, q;
 
-    for(i=0; i<nx; i++)
-        for(j=0; j<ny[i]; j++)
-            for(q=0; q<nq; q++)
-                sum += dom[i][nq*j+q];
+    for(i=0; i<dom->nx; i++)
+        for(j=0; j<dom->ny[i]; j++)
+            for(q=0; q<dom->nq; q++)
+                sum += dom->prim[i][dom->nq*j+q];
 
     return sum;
 }
