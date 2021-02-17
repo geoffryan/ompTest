@@ -1,12 +1,13 @@
 
 default: ompTest
 
-SRC = main.c
+SRC = main.c funcs.c prim.c
+HDR = funcs.h prim.h
 INC = 
 LIB = -lm
-FLAG = -O3 -fopenmp
+FLAG = -O3 -fopenmp -Wall
 
-ompTest: 
+ompTest: $(SRC) $(HDR)
 	gcc $(FLAG) -o $@ $(SRC) $(INC) $(LIB)
 
 clean:
