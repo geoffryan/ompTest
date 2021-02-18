@@ -27,11 +27,12 @@ struct Domain
 
     struct WorkUnit *work_unit;
     int nw;
+    int maxCellsPerWU;
 };
 
 static const struct Domain DOM_EMPTY = {0, NULL, 0, 0.0, 0.0, 0.0, 0.0,
                                         NULL, NULL, NULL,
-                                        NULL, 0};
+                                        NULL, 0, 0};
 
 void makeDomain(struct Domain *dom, int nx, int nq, double xa, double xb,
                 int gridflag, int maxCellsPerWorkUnit);

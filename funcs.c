@@ -116,10 +116,12 @@ void source_wu1(struct Domain *dom)
         double x = 0.5*(dom->ximh[i] + dom->ximh[i+1]);
 
         int j;
-        for(j=ja; j<jb; j++)
+        for(j=ja; j<ja+dom->maxCellsPerWU; j++)
         {
+            if(j >= jb)
+                break;
             double y = 0.5*(dom->yjmh[i][j] + dom->yjmh[i][j+1]);
-            source_prim(dom->prim[i] + nq*j, x, y, nq);
+            source_prim(&(dom->prim[i][nq*j]), x, y, nq);
         }
     }
 }

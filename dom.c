@@ -13,6 +13,7 @@ void makeDomain(struct Domain *dom, int nx, int nq, double xa, double xb,
     dom->xb = xb;
     dom->ya = 0.0;
     dom->yb = 6.0;
+    dom->maxCellsPerWU = maxCellsPerWorkUnit;
 
     dom->ximh = (double *) malloc( (nx+1) * sizeof(double *));
     dom->yjmh = (double **) malloc( nx * sizeof(double *));
@@ -99,6 +100,7 @@ void copyDomain(struct Domain *domIn, struct Domain *domOut)
     domOut->xb = domIn->xb;
     domOut->ya = domIn->ya;
     domOut->yb = domIn->yb;
+    domOut->maxCellsPerWU = domIn->maxCellsPerWU;
 
     int nq = domIn->nq;
 

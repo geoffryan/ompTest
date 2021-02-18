@@ -1,2 +1,7 @@
 ompTest
+Makefile.in
+
 *.swp
+*.txt
+*.png
+run*/
